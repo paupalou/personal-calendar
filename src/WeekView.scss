@@ -1,0 +1,77 @@
+$dark: rgb(64,67,84);
+$green1: rgb(73,88,91);
+$green2: rgb(126,147,152);
+$brown1: rgb(202,181,160);
+$brown2: rgb(188,146,124);
+
+#week-view {
+  display: grid;
+  grid-template-columns: 20% 80%;
+}
+
+.days {
+  display:grid;
+}
+
+.day {
+  border-right: 2px solid lighten($green2, 30);
+  border-top: 0px;
+  padding: 0.25em;
+
+  @media (min-height: 538px) {
+    padding: 0.5em;
+  }
+
+  &:last-child {
+    border-bottom: 0px;
+  }
+
+  &.today {
+    background-color: lighten($green2, 40);
+  }
+
+  &.selected {
+    background-color: lighten($brown1, 20);
+  }
+
+  span {
+    text-align: center;
+    display: block;
+    width: 100%;
+  }
+
+  .number {
+    font-size: 1.15rem;
+    @media (min-height: 538px) {
+      font-size: 1.25rem;
+    }
+    font-weight: bold;
+    line-height: 1.5;
+    color: $green1;
+  }
+
+  .name {
+    color: $green2;
+  }
+}
+
+.content {
+  padding: 10px;
+  &-title {
+    display: block;
+    width: 100%;
+    text-align: center;
+
+    & > .month {
+      font-size: 1.6rem;
+      color: $green1;
+      margin-right: .5rem;
+    }
+
+    & > .year {
+      font-size: .9rem;
+      color: $brown2;
+    }
+  }
+}
+

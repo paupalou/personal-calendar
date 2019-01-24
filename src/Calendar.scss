@@ -1,0 +1,40 @@
+$dark: rgb(64,67,84);
+$green1: rgb(73,88,91);
+$green2: rgb(126,147,152);
+$brown1: rgb(202,181,160);
+$brown2: rgb(188,146,124);
+
+#calendar {
+  font-family: 'Acme', sans-serif;
+  border: 2px solid $brown1;
+  &>div:first-child {
+    height: 90%;
+  }
+
+  &>div:last-child {
+    height: 10%;
+  }
+}
+
+.calendar-picker {
+  border-top: 2px solid $brown1;
+  background-color: lighten($brown2, 30);
+  padding: 10px 5px;
+
+  button {
+    height: 100%;
+    color: $green1;
+    background-color: lighten($brown2, 20);
+    border: 0;
+    border-radius: 3px;
+    margin-right: 10px;
+
+    i {
+      font-size: 1.5rem;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
