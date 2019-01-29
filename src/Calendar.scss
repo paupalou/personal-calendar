@@ -6,12 +6,13 @@ $brown2: rgb(188,146,124);
 
 #calendar {
   font-family: 'Acme', sans-serif;
-  border: 2px solid $brown1;
-  &>div:first-child {
+
+  &>#week-view,
+  &>#month-view {
     height: 90%;
   }
 
-  &>div:last-child {
+  &>.calendar-picker {
     height: 10%;
   }
 }

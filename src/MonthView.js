@@ -2,7 +2,7 @@ import React from 'react';
 
 const Month = props => {
   return (
-    <div>month</div>
+    <div id="month-view">month</div>
   );
 }
 
