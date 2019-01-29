@@ -19,7 +19,7 @@ $brown2: rgb(188,146,124);
   z-index: -1;
 
   &.scrolling {
-    background-color: lighten($brown1, 20);
+    background-color: lighten($green2, 30);
     opacity: 1;
   }
 }
