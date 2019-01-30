@@ -11,21 +11,16 @@ import classNames from 'classnames';
 
 import './WeekView.scss';
 
+import { debounce } from './utils';
+
 const Week = props => {
   const today = new Date();
 
   const [days, setDays] = useState(getWeekOfDay(today));
   const [scrolling, setScrolling] = useState(false);
-  const [scrollInterval, setScrollInterval] = useState();
-
   const [origin, setOrigin] = useState();
-
   const [scrollingDays, setScrollingDays] = useState(
     getWeekOfDay(today)
-  );
-
-  const [scrollingFirstDay, setScrollingFirstDay] = useState(
-    getWeekOfDay(today)[0]
   );
 
   const daysColumn = useRef();
@@ -38,72 +33,62 @@ const Week = props => {
   // }
 
   useEffect(() => {
+    console.log('adding listeners');
+
+    daysColumn.current.addEventListener('touchstart', touchStart);
     daysColumn.current.addEventListener('touchmove', touchMove);
+    daysColumn.current.addEventListener('touchend', touchEnd);
 
     return () => {
-      console.log('unmounting');
+      console.log('removing listeners');
+      daysColumn.current.removeEventListener('touchstart', touchStart);
       daysColumn.current.removeEventListener('touchmove', touchMove);
+      daysColumn.current.removeEventListener('touchend', touchEnd);
     }
-  }, [origin, scrollingFirstDay, scrollInterval]);
+  }, [origin, scrollingDays]);
+
 
   const touchEnd = (event) => {
+    event.preventDefault();
     console.log('TOUCH END');
-    setScrolling(false);
-    setDays(getWeekOfDay(scrollingFirstDay));
     setOrigin(undefined);
-    if (scrollInterval) {
-      clearInterval(scrollInterval);
-      setScrollInterval(undefined);
-    }
+    setScrolling(false);
+    setDays(scrollingDays);
   }
 
   const touchStart = (event) => {
+    event.preventDefault();
+    console.log('touchStart');
     setOrigin(event.changedTouches[0].clientY);
   }
 
   const touchMove = (event) => {
-    console.log('touchMove');
-    const y = event.changedTouches[0].clientY;
-    console.log(`touchMove event y ${y} origin ${origin}`)
-
     event.preventDefault();
+    if (typeof origin === 'undefined') {
+      return;
+    }
+    const y = event.changedTouches[0].clientY;
+    console.log(`touchMove ${origin}`);
+
     setScrolling(true);
 
     arrows.current.style.top = y - 40 + 'px';
     arrows.current.style.left = '10vw';
 
-    // if (origin < y) {
-    // console.log('scrolling top to previousDay = ', previousDay)
-    // console.log('scrollingDays', scrollingDays)
+    const previousDay = subDays(scrollingDays[0], 1);
+    const nextDay = addDays(scrollingDays[scrollingDays.length - 1], 1);
 
-    let interval;
-    if (!scrollInterval) {
-      interval = setInterval(() => {
-        const previousDay = subDays(scrollingFirstDay, 1);
-
-        console.log('fire interval func', Math.random())
-        // setScrollingDays([
-        //   previousDay,
-        //   ...scrollingDays.slice(0, scrollingDays.length - 1)
-        // ]);
-        setScrollingFirstDay(previousDay, 1);
-      }, 1000);
-
-      setScrollInterval(interval);
+    if (origin > y) {
+      setScrollingDays([
+        previousDay,
+        ...scrollingDays.slice(0, scrollingDays.length - 1)
+      ]);
+    } else {
+      setScrollingDays([
+        ...scrollingDays.slice(1, scrollingDays.length),
+        nextDay
+      ]);
     }
-
-
-
-    // } else {
-      // const nextDay = addDays(scrollingDays.slice(-1).pop(), 1);
-
-      // setInterval(() => {
-      //   setScrollingDays([
-      //     ...scrollingDays.slice(1, scrollingDays.length),
-      //     nextDay
-      //   ]);
-      // }, 500)
-    // }
 
     setOrigin(y);
   }
@@ -117,19 +102,11 @@ const Week = props => {
     scrolling
   });
 
-  const sDays = [scrollingFirstDay];
-
-  Array(6).fill(0,0).forEach((_, i) => sDays[i+1] = addDays(sDays[i], 1));
-
-  console.log('sdays', sDays);
-
   return (
     <div id="week-view">
       <div
         ref={daysColumn}
         className={daysColumnClass}
-        onTouchStart={touchStart}
-        onTouchEnd={touchEnd}
       >
         { days.map(day => (
           <Day key={day.getTime()}
@@ -143,7 +120,7 @@ const Week = props => {
 
       <div id="week-scrollbar" className={scrollbarClass}>
         {
-          sDays.map(day => (
+          scrollingDays.map(day => (
           <Day key={day.getTime()}
             day={day}
             select={props.setSelectedDay}
@@ -152,7 +129,7 @@ const Week = props => {
         )}
       </div>
 
-      <Content week={sDays} />
+      <Content week={scrollingDays} />
 
     </div>
   )
