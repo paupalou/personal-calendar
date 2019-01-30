@@ -26,7 +26,7 @@ $brown2: rgb(188,146,124);
 
 .days {
   display:grid;
-  grid-template-rows: repeat(7, 14.2857%);
+  grid-template-rows: 6.25% repeat(7, 12.5%) 6.25%;
   &.scrolling {
     opacity: 0;
     & > .day {
@@ -36,6 +36,23 @@ $brown2: rgb(188,146,124);
     }
     & > .arrows {
       display: block;
+    }
+  }
+
+
+  & > button {
+    border: 0;
+    border-right: 2px solid lighten($green2, 30);
+    background-color: lighten($green2, 30);
+    & > i {
+      font-size: 200%;
+      color: lighten($green2, 10);
+    }
+
+    &:hover {
+      & > i {
+        color: $dark;
+      }
     }
   }
 }
