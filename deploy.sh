@@ -1,11 +1,11 @@
 #!/bin/bash
 
-rm -rf build/
+rm -rf www/
 yarn build
 cd build
 BUILD_GZ_FILE=build-$(date +%Y%m%d"-"%H%M%S).tar.gz
 tar -cvzf $BUILD_GZ_FILE  *
 mv $BUILD_GZ_FILE ../
-scp -P 443 -r . cheto:/home/pau/nginx/www
 cd ..
+rsync -a --delete build/ cheto:/home/pau/nginx/www/
 rm -rf build/
