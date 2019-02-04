@@ -34,8 +34,10 @@ const Week = props => {
 
   return (
     <div id="week-view">
+      <button onClick={showPrevWeek}><i className="fas fa-chevron-up" /></button>
+      <CurrentMonth week={days} />
+
       <div className="days">
-        <button onClick={showPrevWeek}><i class="fas fa-chevron-up" /></button>
         <PoseGroup>
           {
             days.map(day => {
@@ -59,12 +61,50 @@ const Week = props => {
           }
 
         </PoseGroup>
-        <button onClick={showNextWeek}><i class="fas fa-chevron-down" /></button>
       </div>
 
-      <Content week={days} />
+      <button onClick={showNextWeek}><i className="fas fa-chevron-down" /></button>
+      <div></div>
     </div>
   )
+};
+
+const CurrentMonth = ({ week }) => {
+  const len = week
+    .map(day => isSameMonth(week[0], day))
+    .filter(sameMonth => sameMonth === true).length;
+
+  let monthsInWeek = 1;
+  if (len !== 7) {
+    // two different months on same week
+    monthsInWeek += 1;
+  }
+
+  const months = Array(monthsInWeek).fill(0).map((_, index) => {
+    const weekDayIndex = index < 1 ? 0 : len;
+    const key = 'month-' +
+      `${week[weekDayIndex].getMonth()}-` +
+      `${week[weekDayIndex].getFullYear()}`;
+
+    const className = classNames({
+      month: true,
+      first: index === 0,
+      second: index > 0,
+      [`len${len}`]: index === 0,
+      [`len${7-len}`]: index > 0
+    })
+
+    return (
+      <div
+        key={key}
+        className={className}
+      >
+        {week[weekDayIndex].toLocaleDateString('en-US', { month: 'long' })}
+      </div>
+    )
+  })
+
+  return <div className="weekMonths">{months}</div>;
 };
 
 const Day = ({ day }) => (
