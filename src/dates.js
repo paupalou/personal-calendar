@@ -10,11 +10,6 @@ const getWeekOfDay = (date) => {
 
 const getCurrentWeek = () => getWeekOfDay(new Date());
 
-// const getWeekDays = (dates, locale = 'en-US') => {
-//   const options = { weekday: 'short', day: 'numeric' };
-//   return dates.map(date => date.toLocaleDateString(locale, options));
-// }
-
 const formatDay = (date, locale = 'en-US') => {
   const options = { weekday: 'short', day: 'numeric' };
   return date.toLocaleDateString(locale, options);

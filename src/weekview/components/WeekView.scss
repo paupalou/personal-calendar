@@ -4,9 +4,32 @@ $green2: rgb(126,147,152);
 $brown1: rgb(202,181,160);
 $brown2: rgb(188,146,124);
 
+$monthOdd: rgba(66, 122, 161, 1);
+$monthEven: rgba(226, 192, 68, 1);
+
 #week-view {
   display: grid;
-  grid-template-columns: 5% 15% 80%;
+  grid-template-columns: 20% 80%;
+}
+
+#week-content {
+  display: grid;
+  grid-template-rows: 5% repeat(7, calc(90% / 7)) 5%;
+
+  &>div {
+      border-top: 1px solid lighten($green2, 40);
+      border-bottom: 1px solid lighten($green2, 40);
+  }
+
+  @for $i from 1 through 7 {
+    &>div:nth-child(#{$i}) {
+      grid-row: #{$i+1} / #{$i+2};
+    }
+  }
+}
+
+#week-selector {
+  display: grid;
   grid-template-rows: 5% 90% 5%;
 
   & > button {
@@ -30,7 +53,7 @@ $brown2: rgb(188,146,124);
 .weekMonths {
   display: grid;
   grid-column: 1/2;
-  grid-template-rows: repeat(7, 14.2857%);
+  grid-template-rows: repeat(7, calc(100% / 7));
 
   & > .month {
     height: 100%;
@@ -39,36 +62,32 @@ $brown2: rgb(188,146,124);
     color: lighten($green1, 20);
     text-align: center;
     text-transform: uppercase;
-    // text-orientation: upright;
+    text-orientation: upright;
     writing-mode: vertical-lr;
+    font-family: 'Ubuntu Condensed', sans-serif;
     letter-spacing: 0.6rem;
-    &.first {
-      border-right: 2px solid lighten(blue, 30);
+    &.even {
+      border-right: 2px solid lighten($monthEven, 20);
     }
 
-    &.second {
-      border-right: 2px solid lighten(red, 30);
+    &.odd {
+      border-right: 2px solid lighten($monthOdd, 30);
     }
 
     @for $i from 1 through 7 {
-      &.first {
-        &.len#{$i} {
-          grid-row: 1 / #{$i + 1};
-        }
-      }
-      &.second {
-        &.len#{$i} {
+      &.len#{$i} {
+        grid-row: 1 / #{$i + 1};
+        &.secondMonth {
           grid-row: #{7 - $i + 1} / 8;
         }
       }
     }
-
   }
 }
 
 .days {
   display:grid;
-  grid-template-rows: repeat(7, 14.2857%);
+  grid-template-rows: repeat(7, calc(100% / 7));
 }
 
 .arrows {
@@ -82,16 +101,22 @@ $brown2: rgb(188,146,124);
 
 .day {
   border-right: 2px solid lighten($green2, 30);
-  border-top: 0px;
+  border-top: 1px solid lighten($green2, 40);
+  border-bottom: 1px solid lighten($green2, 40);
+
+  &:first-child {
+    border-top: 0px;
+  }
+
+  &:last-child {
+    border-bottom: 0px;
+  }
+
   padding: 0.25em;
   opacity: 1;
 
   @media (min-height: 538px) {
     padding: 0.5em;
-  }
-
-  &:last-child {
-    border-bottom: 0px;
   }
 
   &.today {
@@ -101,6 +126,10 @@ $brown2: rgb(188,146,124);
   &.selected {
     background-color: lighten($brown1, 20);
     transition: background-color 50ms linear;
+  }
+
+  &.firstDayOfMonth {
+    border-top: 1px solid lighten($green2, 10);
   }
 
   span {

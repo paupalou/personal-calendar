@@ -3,8 +3,8 @@ import Div100vh from 'react-div-100vh';
 
 import './Calendar.scss';
 
-const WeekView = lazy(()=> import('./WeekView'));
-const MonthView = lazy(()=> import('./MonthView'));
+const WeekView = lazy(()=> import('./weekview'));
+const MonthView = lazy(()=> import('./monthview'));
 
 const Calendar = props => {
   const today = new Date();
@@ -33,28 +33,23 @@ const Calendar = props => {
   )
 };
 
-const CalendarPicker = ({ mode , toggle, setViewDate }) => {
-      // <button onClick={() => setViewDate(today)}>
-      //   <i className="fas fa-calendar-day" />
-      // </button>
-  return (
-    <div className="calendar-picker">
+const CalendarPicker = ({ mode , toggle, setViewDate }) => (
+  <div className="calendar-picker">
 
-      {
-        mode === 'week' &&
-          <button onClick={() => toggle('month')}>
-            <i className="fas fa-calendar-alt" />
-          </button>
-      }
+    {
+      mode === 'week' &&
+        <button onClick={() => toggle('month')}>
+          <i className="fas fa-calendar-alt" />
+        </button>
+    }
 
-      {
-        mode === 'month' &&
-          <button onClick={() => toggle('week')}>
-            <i className="fas fa-calendar-week" />
-          </button>
-      }
-    </div>
-  )
-}
+    {
+      mode === 'month' &&
+        <button onClick={() => toggle('week')}>
+          <i className="fas fa-calendar-week" />
+        </button>
+    }
+  </div>
+);
 
 export default Calendar;

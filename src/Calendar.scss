@@ -5,14 +5,13 @@ $brown1: rgb(202,181,160);
 $brown2: rgb(188,146,124);
 
 #calendar {
-  font-family: 'Acme', sans-serif;
+  font-family: 'Ubuntu Condensed', sans-serif;
 
-  &>#week-view,
-  &>#month-view {
+  &>:first-child {
     height: 90%;
   }
 
-  &>.calendar-picker {
+  &>:last-child {
     height: 10%;
   }
 }
