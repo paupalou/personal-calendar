@@ -10,6 +10,7 @@ export default (props) => (
     />
 
     <div id="week-content">
+      <span className="filler" />
       <div></div>
       <div></div>
       <div></div>
@@ -17,6 +18,7 @@ export default (props) => (
       <div></div>
       <div></div>
       <div></div>
+      <span className="filler" />
     </div>
   </div>
 );
