@@ -11,7 +11,8 @@ const CurrentMonth = ({ week }) => {
 
   const months = Array.from(Array(renderTwoMonths ? 2 : 1)).map((_, index) => {
     const weekDayIndex = index < 1 ? 0 : len;
-    const key = 'month-' +
+    const key =
+      'month-' +
       `${week[weekDayIndex].getMonth()}-` +
       `${week[weekDayIndex].getFullYear()}`;
 
@@ -28,15 +29,15 @@ const CurrentMonth = ({ week }) => {
 
       secondMonth: index > 0,
       [`len${len}`]: index === 0,
-      [`len${7-len}`]: index > 0
-    })
+      [`len${7 - len}`]: index > 0
+    });
 
     return (
-      <div key={key} className={className} >
+      <div key={key} className={className}>
         {week[weekDayIndex].toLocaleDateString('en-US', { month: 'long' })}
       </div>
-    )
-  })
+    );
+  });
 
   return <div className="weekMonths">{months}</div>;
 };

@@ -1,3 +1,3 @@
-import WeekView from './components/WeekView'
+import WeekView from './components/WeekView';
 
 export default WeekView;

@@ -1,4 +1,4 @@
-import { getWeekOfDay, getWeekDays } from './dates';
+import { getWeekOfDay } from './dates';
 
 const JANUARY_FIRST = new Date(2019, 0, 1);
 
@@ -22,13 +22,6 @@ test('getWeekOfDay should return correct week on January First', () => {
     new Date(2019, 0, 3),
     new Date(2019, 0, 4),
     new Date(2019, 0, 5),
-    new Date(2019, 0, 6),
+    new Date(2019, 0, 6)
   ]);
 });
-
-// test('getWeekDays should return correct week on January First', () => {
-//   expect(getWeekDays(getWeekOfDay(JANUARY_FIRST))).toEqual([
-//     'Mon 31',
-//     'Sun 06',
-//   ]);
-// });
