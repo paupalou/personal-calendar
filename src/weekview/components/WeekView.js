@@ -10,13 +10,15 @@ export default props => (
       setSelectedDay={props.setSelectedDay}
     />
 
-    <div className={styles.content}>
+    <div className={styles['day-content']}>
       <span className="filler" />
       <div />
 
-      <div className="day-tasks">
-        <div> 12:00 </div>
-        <div> Random Task </div>
+      <div className={styles['day-tasks']}>
+        <div>
+          <span> 12:00 </span>
+          <span> Random Task </span>
+        </div>
       </div>
 
       <div />
