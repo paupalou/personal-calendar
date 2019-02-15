@@ -1,4 +1,4 @@
-const throttle = (callback, wait, context = this) => {
+function throttle(callback, wait, context = this) {
   let timeout = null;
   let callbackArgs = null;
 
@@ -15,7 +15,7 @@ const throttle = (callback, wait, context = this) => {
   };
 };
 
-const debounce = (func, delay) => {
+function debounce(func, delay) {
   let inDebounce;
   return function() {
     const context = this;
@@ -25,4 +25,8 @@ const debounce = (func, delay) => {
   };
 };
 
-export { throttle, debounce };
+function generateArrayOf(slots = 0, fillWith) {
+  return Array.from(Array(slots)).fill(fillWith);
+}
+
+export { throttle, debounce, generateArrayOf };

@@ -1,8 +1,9 @@
 import { startOfWeek, addDays } from 'date-fns';
+import { generateArrayOf } from './utils';
 
 function getWeekOfDay(date) {
   const firstDayOfWeek = startOfWeek(date, { weekStartsOn: 1 });
-  const restOfDays = Array.from(Array(6)).map((_, key) =>
+  const restOfDays = generateArrayOf(6).map((_, key) =>
     addDays(firstDayOfWeek, key + 1)
   );
 

@@ -2,6 +2,8 @@ import React from 'react';
 import { isSameMonth } from 'date-fns';
 import classNames from 'classnames';
 
+import { generateArrayOf } from '../../utils';
+
 const CurrentMonth = ({ week }) => {
   const len = week
     .map(day => isSameMonth(week[0], day))
@@ -9,7 +11,7 @@ const CurrentMonth = ({ week }) => {
 
   const renderTwoMonths = len === 7 ? false : true;
 
-  const months = Array.from(Array(renderTwoMonths ? 2 : 1)).map((_, index) => {
+  const months = generateArrayOf(renderTwoMonths ? 2 : 1).map((_, index) => {
     const weekDayIndex = index < 1 ? 0 : len;
     const key =
       'month-' +
