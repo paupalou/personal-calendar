@@ -2,7 +2,7 @@
 
 #week-selector {
   display: grid;
-  grid-template-rows: 5% 90% 5%;
+  grid-template-columns: 25% 75%;
 
   & > button {
     grid-column: 1/3;

@@ -16,8 +16,23 @@ export default props => (
 
       <div className={styles['day-tasks']}>
         <div>
-          <span> 12:00 </span>
-          <span> Random Task </span>
+          <span>12:00</span>
+          <span>Random Task</span>
+        </div>
+
+        <div>
+          <span>14:30 </span>
+          <span>Lunch time!</span>
+        </div>
+
+        <div>
+          <span>16:50 </span>
+          <span>Work meeting</span>
+        </div>
+
+        <div>
+          <span>20:15 </span>
+          <span>Football training hard</span>
         </div>
       </div>
 

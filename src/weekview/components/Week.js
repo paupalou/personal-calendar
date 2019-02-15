@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   addWeeks,
   subWeeks,
@@ -15,10 +15,31 @@ import WeekDay from './WeekDay';
 
 import './WeekView.scss';
 
-export default props => {
+function Week(props) {
   const today = new Date();
+  const weekSelector = useRef();
 
   const [days, setDays] = useState(getWeekOfDay(today));
+  const [userTouchStart, setUserTouchStart] = useState();
+  const [userTouchEnd, setUserTouchEnd] = useState();
+
+  useEffect(() => {
+    console.log('adding effects');
+    const { target } = userTouchStart || {};
+    if (target) {
+      target.addEventListener('touchmove', touchMove);
+      target.addEventListener('touchend', touchEnd);
+    }
+
+    return () => {
+      if (target) {
+        console.log('target found');
+        target.removeEventListener('touchmove', touchMove);
+        target.removeEventListener('touchend', touchEnd);
+      }
+    }
+  }, [userTouchStart]);
+
 
   const showPrevWeek = event => {
     const prevWeek = getWeekOfDay(subWeeks(days[0], 1));
@@ -35,12 +56,57 @@ export default props => {
     exit: { opacity: 0 }
   });
 
-  return (
-    <div id="week-selector">
-      <button onClick={showPrevWeek}>
-        <i className="fas fa-chevron-up" />
-      </button>
+  function touchStart(event) {
+    console.log('touchStart');
+    const { touches } = event;
 
+    if (touches.length > 1) {
+      // it means more than one finger touching screen?
+      return;
+    }
+
+    const timestamp = new Date().getTime();
+    const { targetTouches } = event;
+    const [touch] = targetTouches;
+    const { clientX: x, clientY: y } = touch;
+    setUserTouchStart({ timestamp, x, y, target: event.target });
+  }
+
+  function touchMove(event) {
+    console.log('touchMove (start) :', userTouchStart);
+    if (userTouchStart) {
+      event.preventDefault();
+
+      const { targetTouches } = event;
+      const [touch] = targetTouches;
+      const { clientX: x, clientY: y } = touch;
+
+      debugger;
+      setUserTouchEnd({x, y});
+    }
+  }
+
+  function touchEnd(event) {
+    console.log('touchEnd');
+
+    const now = new Date().getTime();
+    const deltaTime = now - userTouchStart.timestamp;
+    const deltaX = userTouchEnd.x - userTouchStart.x;
+    const deltaY = userTouchEnd.y - userTouchStart.y;
+
+    if (deltaTime > 500) {
+      return;
+    }
+
+    if (deltaY > 100 && Math.abs(deltaX) < 100) {
+      console.log('swipe down');
+    } else if (-deltaY > 100 && Math.abs(deltaX) < 100) {
+      console.log('swipe up');
+    }
+  }
+
+  return (
+    <div id="week-selector" onTouchStart={touchStart} ref={weekSelector}>
       <CurrentMonth week={days} />
 
       <div className="days">
@@ -66,10 +132,8 @@ export default props => {
           })}
         </PoseGroup>
       </div>
-
-      <button onClick={showNextWeek}>
-        <i className="fas fa-chevron-down" />
-      </button>
     </div>
   );
 };
+
+export default Week;
