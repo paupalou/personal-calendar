@@ -19,37 +19,41 @@ function Week(props) {
   const today = new Date();
 
   const [days, setDays] = useState(getWeekOfDay(today));
-  const [userTouchStart, setUserTouchStart] = useState();
+  const [userTouchStartY, setUserTouchStartY] = useState();
+  const [userTouchStartTarget, setUserTouchStartTarget] = useState();
   const weekSelector = useRef();
 
   useEffect(() => {
     weekSelector.current.addEventListener('touchstart', touchStart);
 
-    const { target } = userTouchStart || {};
-
-    if (target) {
-      target.addEventListener('touchmove', touchMove);
-      target.addEventListener('touchend', touchEnd);
-    }
-
     return () => {
       weekSelector.current.removeEventListener('touchstart', touchStart);
-      if (target) {
-        target.removeEventListener('touchmove', touchMove);
-        target.removeEventListener('touchend', touchEnd);
-      }
     }
-  }, [days, userTouchStart]);
+  },[]);
 
-  const showPrevWeek = coords => {
+  useEffect(() => {
+    if (typeof userTouchStartTarget === 'undefined') {
+      return;
+    }
+
+    userTouchStartTarget.addEventListener('touchmove', touchMove);
+    userTouchStartTarget.addEventListener('touchend', touchEnd);
+
+    return () => {
+      userTouchStartTarget.removeEventListener('touchmove', touchMove);
+      userTouchStartTarget.removeEventListener('touchend', touchEnd);
+    }
+  }, [days, userTouchStartTarget, userTouchStartY]);
+
+  const showPrevWeek = y => {
     const prevWeek = getWeekFromFirstDay(subDays(days[0], 1));
-    setUserTouchStart({ ...userTouchStart, ...coords })
+    setUserTouchStartY(y);
     setDays(prevWeek);
   };
 
-  const showNextWeek = coords => {
+  const showNextWeek = y => {
     const nextWeek = getWeekFromFirstDay(days[1]);
-    setUserTouchStart({ ...userTouchStart, ...coords })
+    setUserTouchStartY(y);
     setDays(nextWeek);
   };
 
@@ -64,33 +68,35 @@ function Week(props) {
 
     const { targetTouches } = event;
     const [touch] = targetTouches;
-    const { clientX: x, clientY: y } = touch;
+    const { clientY: y } = touch;
 
-    setUserTouchStart({ x, y, target: event.target })
+    setUserTouchStartY(y);
+    setUserTouchStartTarget(event.target);
   }
 
   function touchMove(event) {
     event.preventDefault();
 
-    if (userTouchStart) {
+    if (userTouchStartY) {
 
       const { targetTouches } = event;
       const [touch] = targetTouches;
-      const { clientX: x, clientY: y } = touch;
+      const { clientY: y } = touch;
 
-      const deltaY = y - userTouchStart.y;
+      const deltaY = y - userTouchStartY;
 
-      if (deltaY > 30) {
-        showPrevWeek({ x, y });
-      } else if (-deltaY > 30) {
-        showNextWeek({ x, y });
+      if (deltaY > 10) {
+        showPrevWeek(y);
+      } else if (-deltaY > 10) {
+        showNextWeek(y);
       }
     }
   }
 
   function touchEnd(event) {
     event.preventDefault();
-    setUserTouchStart(undefined);
+    setUserTouchStartY(undefined);
+    setUserTouchStartTarget(undefined);
   }
 
   return (
