@@ -1,5 +1,6 @@
-import { getWeekOfDay } from './dates';
+import { getWeekOfDay, getWeekFromFirstDay } from './dates';
 
+const DECEMBER_LAST = new Date(2018, 11, 31);
 const JANUARY_FIRST = new Date(2019, 0, 1);
 
 test('should return January', () => {
@@ -25,3 +26,15 @@ test('getWeekOfDay should return correct week on January First', () => {
     new Date(2019, 0, 6)
   ]);
 });
+
+test('getWeekFromFirstDay should return complete week', () => {
+  expect(getWeekFromFirstDay(DECEMBER_LAST)).toEqual([
+    new Date(2018, 11, 31),
+    new Date(2019, 0, 1),
+    new Date(2019, 0, 2),
+    new Date(2019, 0, 3),
+    new Date(2019, 0, 4),
+    new Date(2019, 0, 5),
+    new Date(2019, 0, 6)
+  ]);
+})

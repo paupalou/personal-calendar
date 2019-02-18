@@ -1,63 +1,60 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  addWeeks,
-  subWeeks,
+  addDays,
+  subDays,
   isSameDay,
   isToday,
   isFirstDayOfMonth
 } from 'date-fns';
 import classNames from 'classnames';
-import posed, { PoseGroup } from 'react-pose';
 
-import { getWeekOfDay } from '../../dates';
+import { getWeekOfDay, getWeekFromFirstDay } from '../../dates';
 import CurrentMonth from './CurrentMonth';
 import WeekDay from './WeekDay';
 
 import './WeekView.scss';
 
+
 function Week(props) {
   const today = new Date();
-  const weekSelector = useRef();
 
   const [days, setDays] = useState(getWeekOfDay(today));
   const [userTouchStart, setUserTouchStart] = useState();
-  const [userTouchEnd, setUserTouchEnd] = useState();
+  const weekSelector = useRef();
 
   useEffect(() => {
-    console.log('adding effects');
+    weekSelector.current.addEventListener('touchstart', touchStart);
+
     const { target } = userTouchStart || {};
+
     if (target) {
       target.addEventListener('touchmove', touchMove);
       target.addEventListener('touchend', touchEnd);
     }
 
     return () => {
+      weekSelector.current.removeEventListener('touchstart', touchStart);
       if (target) {
-        console.log('target found');
         target.removeEventListener('touchmove', touchMove);
         target.removeEventListener('touchend', touchEnd);
       }
     }
-  }, [userTouchStart]);
+  }, [days, userTouchStart]);
 
-
-  const showPrevWeek = event => {
-    const prevWeek = getWeekOfDay(subWeeks(days[0], 1));
+  const showPrevWeek = coords => {
+    const prevWeek = getWeekFromFirstDay(subDays(days[0], 1));
+    setUserTouchStart({ ...userTouchStart, ...coords })
     setDays(prevWeek);
   };
 
-  const showNextWeek = event => {
-    const nextWeek = getWeekOfDay(addWeeks(days[0], 1));
+  const showNextWeek = coords => {
+    const nextWeek = getWeekFromFirstDay(days[1]);
+    setUserTouchStart({ ...userTouchStart, ...coords })
     setDays(nextWeek);
   };
 
-  const AnimatedDay = posed.div({
-    enter: { opacity: 1 },
-    exit: { opacity: 0 }
-  });
-
   function touchStart(event) {
-    console.log('touchStart');
+    event.preventDefault();
     const { touches } = event;
 
     if (touches.length > 1) {
@@ -65,72 +62,61 @@ function Week(props) {
       return;
     }
 
-    const timestamp = new Date().getTime();
     const { targetTouches } = event;
     const [touch] = targetTouches;
     const { clientX: x, clientY: y } = touch;
-    setUserTouchStart({ timestamp, x, y, target: event.target });
+
+    setUserTouchStart({ x, y, target: event.target })
   }
 
   function touchMove(event) {
-    console.log('touchMove (start) :', userTouchStart);
+    event.preventDefault();
+
     if (userTouchStart) {
-      event.preventDefault();
 
       const { targetTouches } = event;
       const [touch] = targetTouches;
       const { clientX: x, clientY: y } = touch;
 
-      debugger;
-      setUserTouchEnd({x, y});
+      const deltaY = y - userTouchStart.y;
+
+      if (deltaY > 30) {
+        showPrevWeek({ x, y });
+      } else if (-deltaY > 30) {
+        showNextWeek({ x, y });
+      }
     }
   }
 
   function touchEnd(event) {
-    console.log('touchEnd');
-
-    const now = new Date().getTime();
-    const deltaTime = now - userTouchStart.timestamp;
-    const deltaX = userTouchEnd.x - userTouchStart.x;
-    const deltaY = userTouchEnd.y - userTouchStart.y;
-
-    if (deltaTime > 500) {
-      return;
-    }
-
-    if (deltaY > 100 && Math.abs(deltaX) < 100) {
-      console.log('swipe down');
-    } else if (-deltaY > 100 && Math.abs(deltaX) < 100) {
-      console.log('swipe up');
-    }
+    event.preventDefault();
+    setUserTouchStart(undefined);
   }
 
   return (
-    <div id="week-selector" onTouchStart={touchStart} ref={weekSelector}>
+    <div id="week-selector" ref={weekSelector}>
       <CurrentMonth week={days} />
 
       <div className="days">
-        <PoseGroup>
-          {days.map((day, index) => {
-            const selected = isSameDay(props.selectedDay, day);
-            const dayClass = classNames({
-              day: true,
-              today: isToday(day),
-              selected,
-              firstDayOfMonth: isFirstDayOfMonth(day) && index !== 0
-            });
+        {days.map((day, index) => {
+          const selected = isSameDay(props.selectedDay, day);
+          const dayClass = classNames({
+            day: true,
+            today: isToday(day),
+            selected,
+            firstDayOfMonth: isFirstDayOfMonth(day) && index !== 0
+          });
 
-            return (
-              <AnimatedDay
-                className={dayClass}
-                key={day.getTime()}
-                onClick={() => props.setSelectedDay(day)}
-              >
-                <WeekDay day={day} />
-              </AnimatedDay>
-            );
-          })}
-        </PoseGroup>
+          return (
+            <div
+              className={dayClass}
+              key={day.getTime()}
+              onClick={() => props.setSelectedDay(day)}
+            >
+              <WeekDay day={day} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

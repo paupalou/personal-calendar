@@ -14,9 +14,21 @@ function getCurrentWeek() {
   return getWeekOfDay(new Date());
 }
 
+function getWeekFromFirstDay(date) {
+  const restOfDays = generateArrayOf(6)
+    .map((_, key) => addDays(date, key + 1));
+
+  return [ date, ...restOfDays];
+}
+
 function formatDay(date, locale = 'en-US') {
   const options = { weekday: 'short', day: 'numeric' };
   return date.toLocaleDateString(locale, options);
 }
 
-export { getCurrentWeek, getWeekOfDay, formatDay };
+export {
+  getCurrentWeek,
+  getWeekFromFirstDay,
+  getWeekOfDay,
+  formatDay
+}
