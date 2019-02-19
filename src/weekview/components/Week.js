@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  addDays,
   subDays,
   isSameDay,
   isToday,
@@ -14,107 +13,91 @@ import WeekDay from './WeekDay';
 
 import styles from './Week.module.scss';
 
+const SCROLL_PX_SIZE = 5;
 
 function Week(props) {
   const today = new Date();
 
   const [days, setDays] = useState(getWeekOfDay(today));
-  const [userTouchStartY, setUserTouchStartY] = useState();
-  const [userTouchStartTarget, setUserTouchStartTarget] = useState();
-  const weekSelector = useRef();
+  const [userTouchY, setUserTouchY] = useState();
+  const [prevY, setPrevY] = useState();
+
+  const weekScrollbar = useRef();
 
   useEffect(() => {
-    weekSelector.current.addEventListener('touchstart', touchStart);
+    weekScrollbar.current.addEventListener('touchstart', touchStart);
+    weekScrollbar.current.addEventListener('touchmove', touchMove);
+    weekScrollbar.current.addEventListener('touchend', touchEnd);
+    weekScrollbar.current.addEventListener('touchcancel', touchEnd);
 
     return () => {
-      weekSelector.current.removeEventListener('touchstart', touchStart);
+      weekScrollbar.current.removeEventListener('touchstart', touchStart);
+      weekScrollbar.current.removeEventListener('touchmove', touchMove);
+      weekScrollbar.current.removeEventListener('touchend', touchEnd);
+      weekScrollbar.current.removeEventListener('touchcancel', touchEnd);
     }
   },[]);
 
   useEffect(() => {
-    console.log('userTouchStartTarget', userTouchStartTarget);
-    console.log('userTouchStartY', userTouchStartY);
-
-    // if (typeof userTouchStartTarget === 'undefined') {
-    //   return;
-    // }
-
-    weekSelector.current.addEventListener('touchmove', touchMove);
-    weekSelector.current.addEventListener('touchend', touchEnd);
-    // userTouchStartTarget.addEventListener('touchmove', touchMove);
-    // userTouchStartTarget.addEventListener('touchend', touchEnd);
-
-    return () => {
-      weekSelector.current.removeEventListener('touchmove', touchMove);
-      weekSelector.current.removeEventListener('touchend', touchEnd);
-      // userTouchStartTarget.removeEventListener('touchmove', touchMove);
-      // userTouchStartTarget.removeEventListener('touchend', touchEnd);
-    }
-  }, [days, userTouchStartTarget, userTouchStartY]);
-
-  const showPrevWeek = y => {
-    const prevWeek = getWeekFromFirstDay(subDays(days[0], 1));
-    setUserTouchStartY(y);
-    setDays(prevWeek);
-  };
-
-  const showNextWeek = y => {
-    const nextWeek = getWeekFromFirstDay(days[1]);
-    setUserTouchStartY(y);
-    setDays(nextWeek);
-  };
-
-  function touchStart(event) {
-    event.preventDefault();
-    const { touches } = event;
-
-    if (touches.length > 1) {
-      // it means more than one finger touching screen?
+    if (typeof userTouchY === 'undefined') {
       return;
     }
 
-    const { targetTouches } = event;
-    const [touch] = targetTouches;
-    const { clientY: y } = touch;
+    if (typeof prevY === 'undefined') {
+      setPrevY(userTouchY);
+      return;
+    }
 
-    setUserTouchStartY(y);
-    setUserTouchStartTarget(event.target);
+    if (prevY === userTouchY) {
+      return;
+    }
+
+    const distanceTraveled = prevY - userTouchY;
+
+    if (distanceTraveled > SCROLL_PX_SIZE) {
+      setPrevY(userTouchY);
+      showPrevDay();
+    } else if (-distanceTraveled > SCROLL_PX_SIZE) {
+      setPrevY(userTouchY);
+      showNextDay();
+    }
+  }, [userTouchY, prevY, days])
+
+  function showPrevDay()  {
+    const prevDayWeek = getWeekFromFirstDay(subDays(days[0], 1));
+    setDays(prevDayWeek);
+  }
+
+  function showNextDay() {
+    const nextDayWeek = getWeekFromFirstDay(days[1]);
+    setDays(nextDayWeek);
+  }
+
+  function touchStart(event) {
+    event.preventDefault();
   }
 
   function touchMove(event) {
     event.preventDefault();
-
-    if (userTouchStartY) {
-
-      const { targetTouches } = event;
-      const [touch] = targetTouches;
-      const { clientY: y } = touch;
-
-      const deltaY = y - userTouchStartY;
-
-      if (deltaY > 10) {
-        showPrevWeek(y);
-      } else if (-deltaY > 10) {
-        showNextWeek(y);
-      }
-    }
+    const [touch] = event.targetTouches;
+    setUserTouchY(touch.clientY);
   }
 
   function touchEnd(event) {
     event.preventDefault();
-    setUserTouchStartY(undefined);
-    setUserTouchStartTarget(undefined);
+    setUserTouchY(undefined);
+    setPrevY(undefined);
   }
 
   const cx = classNames.bind(styles);
-  const scrollBarClass = ({
+  const scrollBarClass = cx({
     scrollbar: true,
-    active: userTouchStartTarget
+    active: typeof userTouchY !== 'undefined'
   });
 
   return (
     <>
-      <div className={styles['week-selector']} ref={weekSelector}>
+      <div className={styles['week-selector']}>
         <CurrentMonth week={days} />
 
         <div className={styles.days}>
@@ -132,7 +115,7 @@ function Week(props) {
         </div>
       </div>
 
-      <div className={scrollBarClass} />
+      <div className={scrollBarClass} ref={weekScrollbar} />
     </>
   );
 };
