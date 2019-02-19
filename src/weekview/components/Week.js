@@ -6,13 +6,13 @@ import {
   isToday,
   isFirstDayOfMonth
 } from 'date-fns';
-import classNames from 'classnames';
+import classNames from 'classnames/bind';
 
 import { getWeekOfDay, getWeekFromFirstDay } from '../../dates';
 import CurrentMonth from './CurrentMonth';
 import WeekDay from './WeekDay';
 
-import './WeekView.scss';
+import styles from './Week.module.scss';
 
 
 function Week(props) {
@@ -32,16 +32,23 @@ function Week(props) {
   },[]);
 
   useEffect(() => {
-    if (typeof userTouchStartTarget === 'undefined') {
-      return;
-    }
+    console.log('userTouchStartTarget', userTouchStartTarget);
+    console.log('userTouchStartY', userTouchStartY);
 
-    userTouchStartTarget.addEventListener('touchmove', touchMove);
-    userTouchStartTarget.addEventListener('touchend', touchEnd);
+    // if (typeof userTouchStartTarget === 'undefined') {
+    //   return;
+    // }
+
+    weekSelector.current.addEventListener('touchmove', touchMove);
+    weekSelector.current.addEventListener('touchend', touchEnd);
+    // userTouchStartTarget.addEventListener('touchmove', touchMove);
+    // userTouchStartTarget.addEventListener('touchend', touchEnd);
 
     return () => {
-      userTouchStartTarget.removeEventListener('touchmove', touchMove);
-      userTouchStartTarget.removeEventListener('touchend', touchEnd);
+      weekSelector.current.removeEventListener('touchmove', touchMove);
+      weekSelector.current.removeEventListener('touchend', touchEnd);
+      // userTouchStartTarget.removeEventListener('touchmove', touchMove);
+      // userTouchStartTarget.removeEventListener('touchend', touchEnd);
     }
   }, [days, userTouchStartTarget, userTouchStartY]);
 
@@ -99,32 +106,34 @@ function Week(props) {
     setUserTouchStartTarget(undefined);
   }
 
+  const cx = classNames.bind(styles);
+  const scrollBarClass = ({
+    scrollbar: true,
+    active: userTouchStartTarget
+  });
+
   return (
-    <div id="week-selector" ref={weekSelector}>
-      <CurrentMonth week={days} />
+    <>
+      <div className={styles['week-selector']} ref={weekSelector}>
+        <CurrentMonth week={days} />
 
-      <div className="days">
-        {days.map((day, index) => {
-          const selected = isSameDay(props.selectedDay, day);
-          const dayClass = classNames({
-            day: true,
-            today: isToday(day),
-            selected,
-            firstDayOfMonth: isFirstDayOfMonth(day) && index !== 0
-          });
-
-          return (
-            <div
-              className={dayClass}
+        <div className={styles.days}>
+          {
+            days.map((day, index) =>
+            <WeekDay
+              day={day}
+              today={isToday(day)}
+              selected={isSameDay(props.selectedDay, day)}
+              firstDayOfMonth={isFirstDayOfMonth(day) && index !== 0}
+              clickHandler={props.setSelectedDay}
               key={day.getTime()}
-              onClick={() => props.setSelectedDay(day)}
-            >
-              <WeekDay day={day} />
-            </div>
-          );
-        })}
+            />
+          )};
+        </div>
       </div>
-    </div>
+
+      <div className={scrollBarClass} />
+    </>
   );
 };
 

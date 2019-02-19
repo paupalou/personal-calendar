@@ -1,10 +1,13 @@
 import React from 'react';
 import { isSameMonth } from 'date-fns';
-import classNames from 'classnames';
+import classNames from 'classnames/bind';
 
 import { generateArrayOf } from '../../utils';
 
+import styles from './CurrentMonth.module.scss';
+
 const CurrentMonth = ({ week }) => {
+  const cx = classNames.bind(styles);
   const len = week
     .map(day => isSameMonth(week[0], day))
     .filter(sameMonth => sameMonth === true).length;
@@ -18,7 +21,7 @@ const CurrentMonth = ({ week }) => {
       `${week[weekDayIndex].getMonth()}-` +
       `${week[weekDayIndex].getFullYear()}`;
 
-    const className = classNames({
+    const className = cx({
       month: true,
 
       even: renderTwoMonths
@@ -41,7 +44,7 @@ const CurrentMonth = ({ week }) => {
     );
   });
 
-  return <div className="weekMonths">{months}</div>;
+  return <div className={styles.weekMonths}>{months}</div>;
 };
 
 export default CurrentMonth;
