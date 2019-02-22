@@ -1,7 +1,21 @@
 @import '../../vars';
 
+.startOfMonth {
+  font-size: 0.8rem;
+  color: lighten($green1, 20);
+  text-align: center;
+  text-transform: uppercase;
+  text-orientation: upright;
+  writing-mode: vertical-lr;
+  font-family: 'Ubuntu Condensed', sans-serif;
+  letter-spacing: 0.6rem;
+  & > span {
+  }
+}
+
 .day {
   background-color: white;
+  grid-column: 2/3;
   scroll-snap-coordinate: top;
 
   border-left: 2px solid lighten($monthOdd, 30);

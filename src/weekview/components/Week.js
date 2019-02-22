@@ -73,13 +73,13 @@ function Week(props) {
   return (
     <>
       <div className={styles['week-selector']}>
-        <div />
 
         <div className={styles.days} ref={daysRef}>
           {
             days.map((day, index) =>
             <WeekDay
               day={day}
+              dayIndex={index}
               today={isToday(day)}
               selected={isSameDay(props.selectedDay, day)}
               firstDayOfMonth={isFirstDayOfMonth(day) && index !== 0}

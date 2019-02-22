@@ -3,7 +3,8 @@ import {
   addDays,
   addWeeks,
   subWeeks,
-  eachDay
+  eachDay,
+  getDaysInMonth
 } from 'date-fns';
 import { generateArrayOf } from './utils';
 
@@ -44,6 +45,7 @@ function getStartOfWeek(day, weekStarts = 1) {
 }
 
 export {
+  getDaysInMonth,
   getCurrentWeek,
   getStartOfWeek,
   getSurroundingWeeks,
