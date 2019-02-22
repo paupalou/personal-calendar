@@ -13,7 +13,8 @@ const WeekDay = (props) => {
     day: true,
     today,
     selected,
-    firstDayOfMonth
+    firstDayOfMonth,
+    even: day.getMonth() % 2 === 0
   });
 
   const onClick = () => clickHandler(day);

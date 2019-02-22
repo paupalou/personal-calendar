@@ -6,7 +6,14 @@ import { generateArrayOf } from '../../utils';
 
 import styles from './CurrentMonth.module.scss';
 
-const CurrentMonth = ({ week }) => {
+const CurrentMonth = ({ days, index }) => {
+  // if (typeof element.current === 'undefined') {
+  //   return <div />;
+  // }
+  // console.log(element.current.scrollTop);
+  // const dayHeight = element.current.clientHeight / 7;
+  const week = days.slice(index, index + 7);
+
   const cx = classNames.bind(styles);
   const len = week
     .map(day => isSameMonth(week[0], day))

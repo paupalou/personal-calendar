@@ -1,4 +1,10 @@
-import { startOfWeek, addDays } from 'date-fns';
+import {
+  startOfWeek,
+  addDays,
+  addWeeks,
+  subWeeks,
+  eachDay
+} from 'date-fns';
 import { generateArrayOf } from './utils';
 
 function getWeekOfDay(date) {
@@ -26,8 +32,21 @@ function formatDay(date, locale = 'en-US') {
   return date.toLocaleDateString(locale, options);
 }
 
+function getSurroundingWeeks(day, numberOfWeeks = 10) {
+  return eachDay(
+    subWeeks(day, numberOfWeeks),
+    addWeeks(day, numberOfWeeks)
+  );
+}
+
+function getStartOfWeek(day, weekStarts = 1) {
+  return startOfWeek(day, { weekStartsOn: weekStarts });
+}
+
 export {
   getCurrentWeek,
+  getStartOfWeek,
+  getSurroundingWeeks,
   getWeekFromFirstDay,
   getWeekOfDay,
   formatDay

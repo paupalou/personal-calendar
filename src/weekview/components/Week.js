@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  subDays,
   isSameDay,
   isToday,
   isFirstDayOfMonth
 } from 'date-fns';
-import classNames from 'classnames/bind';
+import debounce from 'lodash/debounce';
 
-import { getWeekOfDay, getWeekFromFirstDay } from '../../dates';
+import {
+  getStartOfWeek,
+  getSurroundingWeeks,
+  getWeekOfDay,
+  getWeekFromFirstDay
+} from '../../dates';
 import CurrentMonth from './CurrentMonth';
 import WeekDay from './WeekDay';
 
@@ -17,90 +21,61 @@ const SCROLL_PX_SIZE = 5;
 
 function Week(props) {
   const today = new Date();
+  const weekStartOfToday = getStartOfWeek(today);
 
-  const [days, setDays] = useState(getWeekOfDay(today));
-  const [userTouchY, setUserTouchY] = useState();
-  const [prevY, setPrevY] = useState();
+  const [days, setDays] = useState(() => getSurroundingWeeks(today));
+  const [weekStartIndex, setWeekStartIndex] = useState(
+    () => days.findIndex(day => isSameDay(day, weekStartOfToday))
+  );
 
-  const weekScrollbar = useRef();
-
-  useEffect(() => {
-    weekScrollbar.current.addEventListener('touchstart', touchStart);
-    weekScrollbar.current.addEventListener('touchmove', touchMove);
-    weekScrollbar.current.addEventListener('touchend', touchEnd);
-    weekScrollbar.current.addEventListener('touchcancel', touchEnd);
-
-    return () => {
-      weekScrollbar.current.removeEventListener('touchstart', touchStart);
-      weekScrollbar.current.removeEventListener('touchmove', touchMove);
-      weekScrollbar.current.removeEventListener('touchend', touchEnd);
-      weekScrollbar.current.removeEventListener('touchcancel', touchEnd);
-    }
-  },[]);
+  const daysRef = useRef();
 
   useEffect(() => {
-    if (typeof userTouchY === 'undefined') {
-      return;
-    }
+    const firstElementDayofWeek = daysRef.current.childNodes[weekStartIndex];
+    daysRef.current.scrollTop = firstElementDayofWeek.offsetTop;
 
-    if (typeof prevY === 'undefined') {
-      setPrevY(userTouchY);
-      return;
-    }
+    // const debounced = debounce(sayFirstDay, 50);
 
-    if (prevY === userTouchY) {
-      return;
-    }
+    // daysRef.current.addEventListener('scroll', debounced);
 
-    const distanceTraveled = prevY - userTouchY;
+    // return () => {
+    //   daysRef.current.removeEventListener('scroll', debounced);
+    // }
+  },[])
 
-    if (distanceTraveled > SCROLL_PX_SIZE) {
-      setPrevY(userTouchY);
-      showPrevDay();
-    } else if (-distanceTraveled > SCROLL_PX_SIZE) {
-      setPrevY(userTouchY);
-      showNextDay();
-    }
-  }, [userTouchY, prevY, days])
+  // function getWeekStartIndex() {
+  //   return weekStartIndex;
+  // }
 
-  function showPrevDay()  {
-    const prevDayWeek = getWeekFromFirstDay(subDays(days[0], 1));
-    setDays(prevDayWeek);
-  }
+  // function sayFirstDay(e) {
+  //   const index = getWeekStartIndex();
+  //   const { scrollTop } = e.target;
+  //   const dayHeight = e.target.clientHeight / 7;
+  //   const newIndex = Math.floor(scrollTop / dayHeight);
+  //   // const newIndex = Math.floor(scrollTop / (600/7));
 
-  function showNextDay() {
-    const nextDayWeek = getWeekFromFirstDay(days[1]);
-    setDays(nextDayWeek);
-  }
+  //   if(index !== newIndex) {
+  //     setWeekStartIndex(newIndex);
+  //   }
+  // }
 
-  function touchStart(event) {
-    event.preventDefault();
-  }
+  // function showPrevDay()  {
+  //   setWeekStartIndex(weekStartIndex - 1);
+  // }
 
-  function touchMove(event) {
-    event.preventDefault();
-    const [touch] = event.targetTouches;
-    setUserTouchY(touch.clientY);
-  }
+  // function showNextDay() {
+  //   setWeekStartIndex(weekStartIndex + 1);
+  // }
 
-  function touchEnd(event) {
-    event.preventDefault();
-    setUserTouchY(undefined);
-    setPrevY(undefined);
-  }
-
-  const cx = classNames.bind(styles);
-  const scrollBarClass = cx({
-    scrollbar: true,
-    active: typeof userTouchY !== 'undefined'
-  });
+  // const week = days.slice(weekStartIndex, weekStartIndex + 7);
+// <CurrentMonth days={days} weekStartIndex={weekStartIndex} />
 
   return (
     <>
       <div className={styles['week-selector']}>
-        <CurrentMonth week={days} />
+        <div />
 
-        <div className={styles.days}>
+        <div className={styles.days} ref={daysRef}>
           {
             days.map((day, index) =>
             <WeekDay
@@ -111,11 +86,10 @@ function Week(props) {
               clickHandler={props.setSelectedDay}
               key={day.getTime()}
             />
-          )};
+          )}
         </div>
       </div>
 
-      <div className={scrollBarClass} ref={weekScrollbar} />
     </>
   );
 };

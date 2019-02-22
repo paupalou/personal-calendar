@@ -2,6 +2,9 @@
 
 .day {
   background-color: white;
+  scroll-snap-coordinate: top;
+
+  border-left: 2px solid lighten($monthOdd, 30);
   border-right: 2px solid lighten($green2, 30);
   border-top: 1px solid lighten($green2, 40);
   border-bottom: 1px solid lighten($green2, 40);
@@ -32,6 +35,10 @@
 
   &.firstDayOfMonth {
     border-top: 1px solid lighten($green2, 10);
+  }
+
+  &.even {
+    border-left: 2px solid lighten($monthEven, 20);
   }
 
   span {
