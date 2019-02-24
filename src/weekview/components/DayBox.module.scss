@@ -1,9 +1,11 @@
 @import '../../vars';
 
 .startOfMonth {
+  display: flex;
+  justify-content: space-around;
   font-size: 0.8rem;
   color: lighten($green1, 20);
-  text-align: center;
+  // text-align: center;
   text-transform: uppercase;
   text-orientation: upright;
   writing-mode: vertical-lr;

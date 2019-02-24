@@ -3,11 +3,11 @@
 #calendar {
   font-family: 'Ubuntu Condensed', sans-serif;
 
-  &>:first-child {
+  & > div {
     height: 90%;
   }
 
-  &>:last-child {
+  & >:last-child {
     height: 10%;
   }
 }

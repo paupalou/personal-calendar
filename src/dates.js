@@ -1,8 +1,9 @@
 import {
+  subMonths,
+  addMonths,
   startOfWeek,
   addDays,
   addWeeks,
-  subWeeks,
   eachDay,
   getDaysInMonth
 } from 'date-fns';
@@ -33,11 +34,26 @@ function formatDay(date, locale = 'en-US') {
   return date.toLocaleDateString(locale, options);
 }
 
-function getSurroundingWeeks(day, numberOfWeeks = 10) {
-  return eachDay(
-    subWeeks(day, numberOfWeeks),
-    addWeeks(day, numberOfWeeks)
+function getSurroundingMonths(day, numberOfMonths = 5) {
+  const previousMonth = subMonths(day, 1)
+  const startDay = new Date(
+    previousMonth.getFullYear(),
+    previousMonth.getMonth(),
+    1
   );
+
+  const futureMonthsDay = addMonths(day, numberOfMonths);
+  const endDay = new Date(
+    futureMonthsDay.getFullYear(),
+    futureMonthsDay.getMonth(),
+    getDaysInMonth(futureMonthsDay)
+  );
+
+  return eachDay(startDay, endDay);
+}
+
+function getNextWeeks(day, numberOfWeeks = 10) {
+  return eachDay(day, addWeeks(day, numberOfWeeks));
 }
 
 function getStartOfWeek(day, weekStarts = 1) {
@@ -48,7 +64,8 @@ export {
   getDaysInMonth,
   getCurrentWeek,
   getStartOfWeek,
-  getSurroundingWeeks,
+  getNextWeeks,
+  getSurroundingMonths,
   getWeekFromFirstDay,
   getWeekOfDay,
   formatDay

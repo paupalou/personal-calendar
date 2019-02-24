@@ -1,12 +1,20 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { getYear, format } from 'date-fns';
 
 import { getDaysInMonth } from '../../dates';
-import styles from './WeekDay.module.scss';
+import styles from './DayBox.module.scss';
 
-const WeekDay = (props) => {
+const DayBox = (props) => {
 
-  const { day, today, selected, firstDayOfMonth, clickHandler } = props;
+  const {
+    day,
+    today,
+    selected,
+    borderSeparator,
+    firstDayOfMonth,
+    clickHandler
+  } = props;
 
   const cx = classNames.bind(styles);
 
@@ -14,11 +22,14 @@ const WeekDay = (props) => {
     day: true,
     today,
     selected,
-    firstDayOfMonth,
+    firstDayOfMonth: borderSeparator,
     even: day.getMonth() % 2 === 0
   });
 
   const onClick = () => clickHandler(day);
+
+  // const locale = navigator.language;
+  const locale = 'en-US';
 
   return (
     <>
@@ -31,13 +42,14 @@ const WeekDay = (props) => {
             height: `calc(calc(90vh /7) * ${getDaysInMonth(day)})`,
           }}
         >
-          <span>
-            {day.toLocaleDateString('en-US', { month: 'long' })}
-          </span>
+          <span>{format(day, 'MMMM', { locale })}</span>
+          <span>{format(day, 'MMMM', { locale })}</span>
 
-          <span>
-            {day.toLocaleDateString('en-US', { month: 'long' })}
-          </span>
+          <span><b>{getYear(day)}</b></span>
+
+          <span>{format(day, 'MMMM', { locale })}</span>
+          <span>{format(day, 'MMMM', { locale })}</span>
+
         </div>
       }
       <div className={dayClass} onClick={onClick}>
@@ -50,4 +62,4 @@ const WeekDay = (props) => {
   );
 };
 
-export default WeekDay;
+export default DayBox;

@@ -15,11 +15,12 @@ const Calendar = props => {
   return (
     <Div100vh id="calendar">
       <Suspense fallback={<div> Loading ...</div>}>
-        {viewMode === 'week' && (
-          <WeekView selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
-        )}
-
-        {viewMode === 'month' && <MonthView />}
+        <WeekView
+          hidden={viewMode !== 'week'}
+          selectedDay={selectedDay}
+          setSelectedDay={setSelectedDay}
+        />
+        <MonthView hidden={viewMode !== 'month'} />
       </Suspense>
 
       <CalendarPicker mode={viewMode} toggle={setViewMode} />
