@@ -1,6 +1,5 @@
 * {
   box-sizing: border-box;
-  overflow-y: hidden;
 }
 
 body {
@@ -11,4 +10,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body div {
+  overflow-y: hidden;
 }

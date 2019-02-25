@@ -3,6 +3,7 @@ import {
   addMonths,
   startOfWeek,
   addDays,
+  subDays,
   addWeeks,
   eachDay,
   getDaysInMonth
@@ -56,6 +57,14 @@ function getNextWeeks(day, numberOfWeeks = 10) {
   return eachDay(day, addWeeks(day, numberOfWeeks));
 }
 
+
+function getNextMonths(day, numberOfMonths = 1) {
+  return eachDay(
+    addDays(day, 1),
+    subDays(addMonths(day, numberOfMonths), 1)
+  );
+}
+
 function getStartOfWeek(day, weekStarts = 1) {
   return startOfWeek(day, { weekStartsOn: weekStarts });
 }
@@ -65,6 +74,7 @@ export {
   getCurrentWeek,
   getStartOfWeek,
   getNextWeeks,
+  getNextMonths,
   getSurroundingMonths,
   getWeekFromFirstDay,
   getWeekOfDay,

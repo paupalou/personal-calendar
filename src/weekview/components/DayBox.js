@@ -20,6 +20,7 @@ const DayBox = (props) => {
 
   const dayClass = cx({
     day: true,
+    'vh-fix': true,
     today,
     selected,
     firstDayOfMonth: borderSeparator,
@@ -30,18 +31,17 @@ const DayBox = (props) => {
 
   // const locale = navigator.language;
   const locale = 'en-US';
+  const id = `${day.getMonth()}|${day.getFullYear()}`;
+  const calendarEl = document.getElementById('calendar');
+  const dayHeight = ((calendarEl.clientHeight / 100) * 90) / 7;
+  const monthHeight = dayHeight * getDaysInMonth(day);
+  const monthStyle = { height: monthHeight };
 
   return (
     <>
       {
         firstDayOfMonth &&
-        <div
-          id={`${day.getMonth()}|${day.getFullYear()}`}
-          className={styles.startOfMonth}
-          style={{
-            height: `calc(calc(90vh /7) * ${getDaysInMonth(day)})`,
-          }}
-        >
+        <div id={id} className={styles.startOfMonth} style={monthStyle}>
           <span>{format(day, 'MMMM', { locale })}</span>
           <span>{format(day, 'MMMM', { locale })}</span>
 

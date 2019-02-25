@@ -5,12 +5,8 @@ import Week from './Week';
 import styles from './WeekView.module.scss';
 
 export default props => {
-
   const cx = classNames.bind(styles);
-  const className = cx({
-    container: true,
-    hidden: props.hidden
-  });
+  const className = cx({ container: true, hidden: props.hidden });
 
   return (
     <div className={className}>
