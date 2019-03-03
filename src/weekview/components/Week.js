@@ -8,7 +8,7 @@ import {
 import {
   getStartOfWeek,
   getSurroundingMonths,
-  getNextMonths
+  getNextMonth
 } from '../../dates';
 import DayBox from './DayBox';
 
@@ -19,37 +19,28 @@ function Week(props) {
   const weekStartOfToday = getStartOfWeek(today);
 
   const [days, setDays] = useState(() => getSurroundingMonths(today));
-  const [weekStartIndex] = useState(
-    () => days.findIndex(day => isSameDay(day, weekStartOfToday))
-  );
-
   const daysRef = useRef();
   const scrolling = useRef()
   const timeout = useRef()
 
   useEffect(() => {
-    const firstElementDayofWeek = daysRef.current.childNodes[weekStartIndex];
+    const firstElementDayofWeek = document.getElementById(
+      `${weekStartOfToday.getTime()}`
+    );
+
     daysRef.current.scrollTop = firstElementDayofWeek.offsetTop;
   }, []);
 
-  // useEffect(() => {
-  //   scrolling.current = 
-  // })
-  //
   function addMonths() {
-    console.log('adding');
-    setDays([...days, ...getNextMonths(days[days.length - 1], 2)]);
+    setDays([...days, ...getNextMonth(days[days.length - 1])]);
   }
 
   function onScroll(e) {
-    // console.log('scrolling: ', scrolling.current);
-    // console.log(daysRef.current.scrollTop);
-    // console.log('Height: ', daysRef.current.clientHeight);
-
     const { scrollTop, scrollHeight, clientHeight } = daysRef.current;
-    if ((scrollHeight - clientHeight) - scrollTop < 600) {
-      // console.log('BOTTOM');
-      // load extra month
+    const diff =
+      ((scrollHeight - clientHeight - scrollTop) / scrollHeight) * 100;
+
+    if (diff < 1) {
       requestAnimationFrame(addMonths);
     }
 

@@ -5,16 +5,15 @@ import { getYear, format } from 'date-fns';
 import { getDaysInMonth } from '../../dates';
 import styles from './DayBox.module.scss';
 
-const DayBox = (props) => {
-
+const DayBox = React.memo((props) => {
   const {
-    day,
-    today,
-    selected,
-    borderSeparator,
-    firstDayOfMonth,
-    clickHandler
-  } = props;
+      day,
+      today,
+      selected,
+      borderSeparator,
+      firstDayOfMonth,
+      clickHandler
+    } = props;
 
   const cx = classNames.bind(styles);
 
@@ -28,31 +27,30 @@ const DayBox = (props) => {
   });
 
   const onClick = () => clickHandler(day);
-
   // const locale = navigator.language;
   const locale = 'en-US';
-  const id = `${day.getMonth()}|${day.getFullYear()}`;
   const calendarEl = document.getElementById('calendar');
   const dayHeight = ((calendarEl.clientHeight / 100) * 90) / 7;
   const monthHeight = dayHeight * getDaysInMonth(day);
-  const monthStyle = { height: monthHeight };
+  const monthStyle = {
+    height: monthHeight
+  };
+  const month = format(day, 'MMMM', { locale });
+  const monthId = `${day.getMonth()}|${day.getFullYear()}`;
 
   return (
     <>
       {
         firstDayOfMonth &&
-        <div id={id} className={styles.startOfMonth} style={monthStyle}>
-          <span>{format(day, 'MMMM', { locale })}</span>
-          <span>{format(day, 'MMMM', { locale })}</span>
-
+        <div id={monthId} className={styles.startOfMonth} style={monthStyle}>
+          <span>{month}</span>
+          <span>{month}</span>
           <span><b>{getYear(day)}</b></span>
-
-          <span>{format(day, 'MMMM', { locale })}</span>
-          <span>{format(day, 'MMMM', { locale })}</span>
-
+          <span>{month}</span>
+          <span>{month}</span>
         </div>
       }
-      <div className={dayClass} onClick={onClick}>
+      <div id={day.getTime()} className={dayClass} onClick={onClick}>
         <span className={styles.number}>{day.getDate()}</span>
         <span className={styles.name}>
           {day.toLocaleDateString('en-US', { weekday: 'short' })}
@@ -60,6 +58,6 @@ const DayBox = (props) => {
       </div>
     </>
   );
-};
+});
 
 export default DayBox;
