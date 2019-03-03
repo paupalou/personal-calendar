@@ -1,19 +1,5 @@
 @import '../../vars';
 
-.startOfMonth {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  font-size: 0.8rem;
-  color: lighten($green1, 20);
-  text-transform: uppercase;
-  text-orientation: upright;
-  writing-mode: vertical-lr;
-  font-family: 'Ubuntu Condensed', sans-serif;
-  letter-spacing: 0.6rem;
-}
-
 .day {
   background-color: white;
   grid-column: 2/3;

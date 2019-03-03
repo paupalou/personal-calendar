@@ -1,8 +1,7 @@
 import React from 'react';
 import classNames from 'classnames/bind';
-import { getYear, format } from 'date-fns';
 
-import { getDaysInMonth } from '../../dates';
+import MonthIndicator from './MonthIndicator';
 import styles from './DayBox.module.scss';
 
 const DayBox = React.memo((props) => {
@@ -27,29 +26,13 @@ const DayBox = React.memo((props) => {
   });
 
   const onClick = () => clickHandler(day);
+
   // const locale = navigator.language;
   const locale = 'en-US';
-  const calendarEl = document.getElementById('calendar');
-  const dayHeight = ((calendarEl.clientHeight / 100) * 90) / 7;
-  const monthHeight = dayHeight * getDaysInMonth(day);
-  const monthStyle = {
-    height: monthHeight
-  };
-  const month = format(day, 'MMMM', { locale });
-  const monthId = `${day.getMonth()}|${day.getFullYear()}`;
 
   return (
     <>
-      {
-        firstDayOfMonth &&
-        <div id={monthId} className={styles.startOfMonth} style={monthStyle}>
-          <span>{month}</span>
-          <span>{month}</span>
-          <span><b>{getYear(day)}</b></span>
-          <span>{month}</span>
-          <span>{month}</span>
-        </div>
-      }
+      { firstDayOfMonth && <MonthIndicator day={day} locale={locale} /> }
       <div id={day.getTime()} className={dayClass} onClick={onClick}>
         <span className={styles.number}>{day.getDate()}</span>
         <span className={styles.name}>

@@ -56,7 +56,6 @@ function getNextWeeks(day, numberOfWeeks = 10) {
   return eachDay(day, addWeeks(day, numberOfWeeks));
 }
 
-
 function getNextMonth(day) {
   const firstDay = addDays(day, 1);
   const numberOfDays = getDaysInMonth(firstDay) - 1;
