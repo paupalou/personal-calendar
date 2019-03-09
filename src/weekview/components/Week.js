@@ -35,7 +35,7 @@ function Week(props) {
     setDays([...days, ...getNextMonth(days[days.length - 1])]);
   }
 
-  function onScroll(e) {
+  function onScroll() {
     const { scrollTop, scrollHeight, clientHeight } = daysRef.current;
     const diff =
       ((scrollHeight - clientHeight - scrollTop) / scrollHeight) * 100;
